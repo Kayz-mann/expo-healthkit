@@ -1,0 +1,34 @@
+{
+  "name": "expo-healthkit",
+  "version": "1.0.0",
+  "description": "Expo module for HealthKit integration",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "scripts": {
+    "build": "expo-module build",
+    "clean": "expo-module clean",
+    "lint": "expo-module lint",
+    "test": "expo-module test",
+    "prepare": "expo-module prepare",
+    "prepublishOnly": "expo-module prepublishOnly",
+    "expo-module": "expo-module"
+  },
+  "keywords": [
+    "react-native",
+    "expo",
+    "expo-module",
+    "healthkit",
+    "ios",
+    "health"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "expo-module-scripts": "^4.1.9"
+  },
+  "peerDependencies": {
+    "expo": "*",
+    "react": "*",
+    "react-native": "*"
+  }
+}

@@ -38,6 +38,13 @@
             "backgroundColor": "#000000"
           }
         }
+      ],
+      [
+        "./modules/expo-healthkit/plugin/src/index.ts",
+        {
+          "healthShareUsageDescription": "This app needs access to read your health and workout data",
+          "healthUpdateUsageDescription": "This app needs access to save your workout data to the Health app"
+        }
       ]
     ],
     "experiments": {
