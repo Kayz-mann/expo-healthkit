@@ -1,50 +1,149 @@
-# Welcome to your Expo app 👋
+# Health Kit RN - HealthKit Integration with Expo
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A React Native app with native iOS HealthKit integration using Expo Modules.
 
-## Get started
+## 🎯 What This Project Does
 
-1. Install dependencies
+This project demonstrates how to integrate iOS HealthKit into a React Native app using **Expo Modules**. It includes a complete working module that lets you:
 
-   ```bash
-   npm install
-   ```
+- ✅ Save workouts to HealthKit
+- ✅ Query workout history
+- ✅ Get aggregate statistics
+- ✅ Delete workouts
+- ✅ Full TypeScript support
 
-2. Start the app
+## 📁 Project Structure
 
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```
+health-kit-rn/
+├── modules/expo-healthkit/        # Local Expo HealthKit module
+│   ├── ios/                       # Native Swift code
+│   │   ├── ExpoHealthKitModule.swift
+│   │   └── ExpoHealthKitManager.swift
+│   ├── src/                       # TypeScript API
+│   └── app.plugin.js              # Auto-configuration
+├── app/
+│   └── healthkit-demo.tsx         # Working demo
+└── ios/                           # Generated native project
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## 🚀 Quick Start
 
-## Learn more
+### 1. Install Dependencies
 
-To learn more about developing your project with Expo, look at the following resources:
+```bash
+yarn install
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+### 2. Build and Run on Device
 
-## Join the community
+**⚠️ IMPORTANT:** HealthKit requires a physical iOS device (not simulator).
 
-Join our community of developers creating universal apps.
+Connect your iPhone and run:
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+```bash
+yarn ios --device
+```
+
+Or open in Xcode:
+
+```bash
+cd ios && open healthkitrn.xcworkspace
+```
+
+Then select your device and press Run (⌘R).
+
+### 3. Test the Demo
+
+Once the app launches, navigate to the **healthkit-demo** screen to test:
+- Request HealthKit authorization
+- Save sample workouts
+- Query workout history
+- View statistics
+
+## 💻 Usage Example
+
+```typescript
+import * as ExpoHealthKit from 'expo-healthkit';
+
+// Request permission
+await ExpoHealthKit.requestAuthorization([], ['Workout']);
+
+// Save a workout
+await ExpoHealthKit.saveWorkout({
+  startDate: Date.now() / 1000 - 3600,
+  endDate: Date.now() / 1000,
+  duration: 3600,
+  distance: 5000,
+  calories: 350,
+  activityType: 'running',
+});
+
+// Query workouts
+const workouts = await ExpoHealthKit.queryWorkouts({
+  startDate: new Date('2024-01-01'),
+  endDate: new Date(),
+});
+```
+
+## 🏗️ Architecture
+
+This project shows how to bridge Swift/HealthKit to React Native:
+
+```
+JavaScript (TypeScript)
+       ↓
+requireNativeModule
+       ↓
+  Expo Bridge
+       ↓
+  Swift Module
+       ↓
+  iOS HealthKit
+```
+
+**Key Components:**
+
+1. **Swift Module** ([ExpoHealthKitModule.swift](modules/expo-healthkit/ios/ExpoHealthKitModule.swift)) - Defines the native interface
+2. **Swift Manager** ([ExpoHealthKitManager.swift](modules/expo-healthkit/ios/ExpoHealthKitManager.swift)) - Implements HealthKit operations
+3. **TypeScript API** ([src/ExpoHealthKit.ts](modules/expo-healthkit/src/ExpoHealthKit.ts)) - Type-safe JavaScript wrapper
+4. **Config Plugin** ([app.plugin.js](modules/expo-healthkit/app.plugin.js)) - Auto-adds permissions
+
+## 📚 Full Documentation
+
+See [modules/expo-healthkit/README.md](modules/expo-healthkit/README.md) for:
+- Complete API reference
+- All supported functions
+- TypeScript types
+- Advanced usage
+
+## ⚠️ Troubleshooting
+
+### "Cannot find native module"
+
+This happens when running `yarn start` without building.
+
+**Solution:** Run `yarn ios --device` to build the native code.
+
+### Module not updating
+
+```bash
+rm -rf node_modules/expo-healthkit
+yarn install
+yarn ios --device
+```
+
+## 📖 Learn More
+
+- [Expo Modules Docs](https://docs.expo.dev/modules/overview/)
+- [HealthKit Docs](https://developer.apple.com/documentation/healthkit)
+- [Reference: expo-ios-popover-tip](https://github.com/rit3zh/expo-ios-popover-tip)
+
+## 🎓 What You'll Learn
+
+This project teaches:
+- How to create local Expo modules
+- Swift ↔ JavaScript bridging
+- HealthKit integration
+- Expo config plugins
+- Native module architecture
