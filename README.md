@@ -216,6 +216,27 @@ See [modules/expo-healthkit/README.md](modules/expo-healthkit/README.md) for:
 3. Check "Automatically manage signing"
 4. Select your Apple Developer Team
 
+### "Provisioning profile doesn't support HealthKit capability"
+
+**Cause:** HealthKit requires special App ID configuration in your Apple Developer account.
+
+**Solution:**
+
+1. **Register App ID with HealthKit:**
+   - Go to https://developer.apple.com/account
+   - Navigate to **Certificates, Identifiers & Profiles** → **Identifiers**
+   - Find or create App ID: `com.kayz-mann.health-kit-rn`
+   - ✅ Enable **HealthKit** capability
+   - Click **Save**
+
+2. **Regenerate Provisioning Profile in Xcode:**
+   - Open Xcode → **Signing & Capabilities**
+   - **Uncheck** "Automatically manage signing"
+   - **Check** it again (forces Xcode to regenerate)
+   - Wait for Xcode to download new profile
+
+3. **Build again** - the profile will now include HealthKit entitlements
+
 ### Module not updating
 
 ```bash
