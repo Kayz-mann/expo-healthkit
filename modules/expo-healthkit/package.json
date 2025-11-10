@@ -22,12 +22,12 @@
   },
   "author": "Your Name",
   "license": "MIT",
+  "dependencies": {
+    "expo-modules-core": "*"
+  },
   "peerDependencies": {
     "expo": "*",
     "react": "*",
     "react-native": "*"
-  },
-  "devDependencies": {
-    "expo-modules-core": "^2.0.0"
   }
 }
