@@ -93,21 +93,36 @@ yarn install
 
 ### 2. Build and Run on Device
 
-**⚠️ IMPORTANT:** HealthKit requires a physical iOS device (not simulator).
+**⚠️ CRITICAL:** This app REQUIRES building with Xcode or `yarn ios --device`. You **CANNOT** use `yarn start` alone because:
+- The native Swift module needs to be compiled
+- HealthKit requires a physical iOS device (not simulator)
+- Metro bundler only handles JavaScript, not native code
+
+**Option A: Build with Xcode (Recommended for first build)**
+
+1. Open the workspace:
+   ```bash
+   cd ios && open healthkitrn.xcworkspace
+   ```
+
+2. In Xcode:
+   - Select the **healthkitrn** project → **healthkitrn** target
+   - Go to **Signing & Capabilities** tab
+   - ✅ Check "Automatically manage signing"
+   - Select your Apple Developer Team from the dropdown
+
+3. Connect your iPhone and select it as the destination
+
+4. Press Run ▶️ (or ⌘R)
+
+**Option B: Build with CLI**
 
 Connect your iPhone and run:
-
 ```bash
 yarn ios --device
 ```
 
-Or open in Xcode:
-
-```bash
-cd ios && open healthkitrn.xcworkspace
-```
-
-Then select your device and press Run (⌘R).
+**Common Error:** If you see `Error: Cannot find native module 'ExpoHealthKit'`, it means you tried to run with `yarn start` instead of building the app. You must build with Xcode or `yarn ios --device` first.
 
 ### 3. Using the App
 
@@ -179,17 +194,34 @@ See [modules/expo-healthkit/README.md](modules/expo-healthkit/README.md) for:
 
 ## ⚠️ Troubleshooting
 
-### "Cannot find native module"
+### "Cannot find native module 'ExpoHealthKit'"
 
-This happens when running `yarn start` without building.
+**Cause:** You're running the Metro bundler (`yarn start`) without building the native code.
 
-**Solution:** Run `yarn ios --device` to build the native code.
+**Why this happens:**
+- Metro bundler only handles JavaScript files
+- Native Swift modules must be compiled with Xcode or `yarn ios`
+- The module exists in code but hasn't been built into a binary
+
+**Solution:**
+1. Stop Metro bundler (Ctrl+C)
+2. Build the app with Xcode or run `yarn ios --device`
+3. The module will be compiled and available
+
+### "Signing for 'healthkitrn' requires a development team"
+
+**Solution:** Open Xcode and configure code signing:
+1. `open ios/healthkitrn.xcworkspace`
+2. Select **healthkitrn** target → **Signing & Capabilities**
+3. Check "Automatically manage signing"
+4. Select your Apple Developer Team
 
 ### Module not updating
 
 ```bash
 rm -rf node_modules/expo-healthkit
 yarn install
+cd ios && pod install
 yarn ios --device
 ```
 
