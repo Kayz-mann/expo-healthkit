@@ -2,8 +2,8 @@
   "name": "expo-healthkit",
   "version": "1.0.0",
   "description": "Expo module for HealthKit integration",
-  "main": "build/index.js",
-  "types": "build/index.d.ts",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
   "scripts": {
     "build": "expo-module build",
     "clean": "expo-module clean",
