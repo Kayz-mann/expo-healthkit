@@ -225,7 +225,7 @@ See [modules/expo-healthkit/README.md](modules/expo-healthkit/README.md) for:
 1. **Register App ID with HealthKit:**
    - Go to https://developer.apple.com/account
    - Navigate to **Certificates, Identifiers & Profiles** → **Identifiers**
-   - Find or create App ID: `com.kayz-mann.health-kit-rn`
+   - Find or create App ID: `com.kayzmann.healthkitrn`
    - ✅ Enable **HealthKit** capability
    - Click **Save**
 
