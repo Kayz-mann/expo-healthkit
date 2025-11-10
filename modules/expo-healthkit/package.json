@@ -24,6 +24,7 @@
   "author": "Your Name",
   "license": "MIT",
   "devDependencies": {
+    "@expo/config-plugins": "^54.0.2",
     "expo-module-scripts": "^4.1.9"
   },
   "peerDependencies": {

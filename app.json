@@ -9,7 +9,8 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.kayz-mann.health-kit-rn"
     },
     "android": {
       "adaptiveIcon": {
@@ -40,7 +41,7 @@
         }
       ],
       [
-        "./modules/expo-healthkit/plugin/src/index.ts",
+        "./modules/expo-healthkit/app.plugin.js",
         {
           "healthShareUsageDescription": "This app needs access to read your health and workout data",
           "healthUpdateUsageDescription": "This app needs access to save your workout data to the Health app"
