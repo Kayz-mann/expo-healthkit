@@ -23,5 +23,6 @@ Pod::Spec.new do |s|
     'SWIFT_COMPILATION_MODE' => 'wholemodule'
   }
 
-  s.source_files = "**/*.{h,m,mm,swift,hpp,cpp}"
+  # Only include iOS Swift files, exclude node_modules and android
+  s.source_files = "ios/**/*.{h,m,mm,swift,hpp,cpp}"
 end
