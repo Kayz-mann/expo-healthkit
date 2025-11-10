@@ -1,4 +1,3 @@
-// Export all functions
 export {
   isAvailable,
   requestAuthorization,
@@ -9,10 +8,9 @@ export {
   deleteWorkout,
 } from './ExpoHealthKit';
 
-// Export all types
 export type {
-  HealthKitPermission,
   ActivityType,
+  DataType,
   WorkoutData,
   Workout,
   QueryOptions,

@@ -1,127 +1,61 @@
 # expo-healthkit
 
-A native Expo module for integrating HealthKit into your React Native app. Save and query workout data with full TypeScript support.
-
-## Features
-
-- 🏃 Save workouts to HealthKit (running, walking, cycling, etc.)
-- 📊 Query workout history
-- 📈 Get aggregate stats (total distance, calories)
-- 🗑️ Delete workouts
-- 💪 Full TypeScript support
-- ⚡️ Built with Expo Modules for optimal performance
+iOS HealthKit integration module for Expo apps.
 
 ## Installation
 
-This is a local module. It's already included in your project dependencies.
+This is a local module. It's already linked in your project via Expo's autolinking.
 
-```bash
-npm install
-```
+## Features
 
-## Setup
-
-### 1. Run prebuild to generate native iOS project
-
-```bash
-npx expo prebuild --platform ios
-```
-
-### 2. Install iOS dependencies
-
-```bash
-cd ios && pod install && cd ..
-```
-
-## Configuration
-
-The HealthKit permissions are automatically configured via the Expo Config Plugin in `app.json`:
-
-```json
-{
-  "expo": {
-    "plugins": [
-      [
-        "./modules/expo-healthkit/plugin/src/index.ts",
-        {
-          "healthShareUsageDescription": "Custom message for reading health data",
-          "healthUpdateUsageDescription": "Custom message for writing health data"
-        }
-      ]
-    ]
-  }
-}
-```
+- Save workouts to HealthKit
+- Query workout history
+- Get aggregate statistics (distance, calories)
+- Delete workouts
+- Full TypeScript support
+- Automatic HealthKit permissions configuration
 
 ## Usage
-
-### Request Authorization
 
 ```typescript
 import * as ExpoHealthKit from 'expo-healthkit';
 
-// Request permission to write workouts
+// Check if HealthKit is available
+const available = ExpoHealthKit.isAvailable();
+
+// Request authorization
 await ExpoHealthKit.requestAuthorization([], ['Workout']);
-```
 
-### Save a Workout
-
-```typescript
-// Example: Save a 5km run
-await ExpoHealthKit.saveWorkout({
-  startDate: Date.now() / 1000 - 3600, // 1 hour ago (Unix timestamp)
-  endDate: Date.now() / 1000,           // Now
-  duration: 3600,                        // 1 hour in seconds
-  distance: 5000,                        // 5km in meters
-  calories: 350,                         // kcal burned
+// Save a workout
+const workoutId = await ExpoHealthKit.saveWorkout({
+  startDate: Date.now() / 1000 - 3600,
+  endDate: Date.now() / 1000,
+  duration: 3600,
+  distance: 5000,
+  calories: 350,
   activityType: 'running',
 });
-```
 
-### Query Workouts
-
-```typescript
+// Query workouts
 const workouts = await ExpoHealthKit.queryWorkouts({
   startDate: new Date('2024-01-01'),
   endDate: new Date(),
-  limit: 10, // Optional: limit results
+  limit: 10,
 });
 
-console.log(workouts);
-// [
-//   {
-//     id: 'uuid',
-//     startDate: 1704067200,
-//     endDate: 1704070800,
-//     duration: 3600,
-//     distance: 5000,
-//     calories: 350,
-//     activityType: 'running'
-//   },
-//   ...
-// ]
-```
-
-### Get Aggregate Stats
-
-```typescript
-// Total distance in meters
+// Get statistics
 const totalDistance = await ExpoHealthKit.getTotalDistance(
   new Date('2024-01-01'),
   new Date()
 );
 
-// Total calories burned
 const totalCalories = await ExpoHealthKit.getTotalCalories(
   new Date('2024-01-01'),
   new Date()
 );
-```
 
-### Delete a Workout
-
-```typescript
-await ExpoHealthKit.deleteWorkout('workout-uuid');
+// Delete a workout
+await ExpoHealthKit.deleteWorkout(workoutId);
 ```
 
 ## API Reference
@@ -130,115 +64,79 @@ await ExpoHealthKit.deleteWorkout('workout-uuid');
 
 Check if HealthKit is available on the device.
 
-### `requestAuthorization(readTypes?, writeTypes?): Promise<void>`
+### `requestAuthorization(readTypes: DataType[], writeTypes: DataType[]): Promise<void>`
 
-Request HealthKit permissions.
+Request authorization to access HealthKit data.
 
-- `readTypes`: Array of permission types to read (e.g., `['Workout', 'HeartRate']`)
-- `writeTypes`: Array of permission types to write (e.g., `['Workout']`)
+**DataType**: `'Workout' | 'Distance' | 'Calories' | 'Steps' | 'HeartRate'`
 
-### `saveWorkout(workout): Promise<void>`
+### `saveWorkout(workout: WorkoutData): Promise<string>`
 
-Save a workout to HealthKit.
+Save a workout to HealthKit. Returns the UUID of the saved workout.
 
-**Parameters:**
-- `startDate` (number): Unix timestamp in seconds
-- `endDate` (number): Unix timestamp in seconds
-- `duration` (number): Duration in seconds
-- `distance` (number): Distance in meters
-- `calories` (number): Calories burned in kcal
-- `activityType` (string, optional): Activity type (default: 'running')
-- `metadata` (object, optional): Additional metadata
-
-**Supported Activity Types:**
-- `running`, `walking`, `cycling`, `hiking`, `swimming`, `yoga`, `dance`, `basketball`, `soccer`, `tennis`
-
-### `queryWorkouts(options): Promise<Workout[]>`
-
-Query workouts from HealthKit.
-
-**Options:**
-- `startDate` (Date): Start of date range
-- `endDate` (Date): End of date range
-- `limit` (number, optional): Maximum number of results
-
-### `getTotalDistance(startDate, endDate): Promise<number>`
-
-Get total distance (in meters) for all workouts in a date range.
-
-### `getTotalCalories(startDate, endDate): Promise<number>`
-
-Get total calories (in kcal) for all workouts in a date range.
-
-### `deleteWorkout(workoutId): Promise<void>`
-
-Delete a workout by its ID.
-
-## Comparison with running-club-latest
-
-This module recreates the HealthKit functionality from your Swift running app:
-
-| running-club-latest | expo-healthkit |
-|---------------------|----------------|
-| `HealthManager.shared.requestAuthorization()` | `requestAuthorization()` |
-| `HealthManager.shared.addWorkout()` | `saveWorkout()` |
-| Direct Swift/SwiftUI | React Native via Expo Modules |
-| Singleton pattern | Functional API |
-
-## Example: Running Tracker Integration
-
+**WorkoutData**:
 ```typescript
-import React, { useEffect, useState } from 'react';
-import { View, Button, Text } from 'react-native';
-import * as ExpoHealthKit from 'expo-healthkit';
-
-export default function RunTracker() {
-  const [isRunning, setIsRunning] = useState(false);
-  const [startTime, setStartTime] = useState(0);
-  const [distance, setDistance] = useState(0);
-
-  useEffect(() => {
-    // Request authorization on mount
-    ExpoHealthKit.requestAuthorization([], ['Workout']);
-  }, []);
-
-  const startRun = () => {
-    setIsRunning(true);
-    setStartTime(Date.now() / 1000);
-    // Start location tracking...
-  };
-
-  const stopRun = async () => {
-    setIsRunning(false);
-
-    // Save workout to HealthKit
-    await ExpoHealthKit.saveWorkout({
-      startDate: startTime,
-      endDate: Date.now() / 1000,
-      duration: Date.now() / 1000 - startTime,
-      distance: distance,
-      calories: calculateCalories(distance, duration),
-      activityType: 'running',
-    });
-  };
-
-  return (
-    <View>
-      <Text>Distance: {distance}m</Text>
-      {!isRunning ? (
-        <Button title="Start Run" onPress={startRun} />
-      ) : (
-        <Button title="Stop Run" onPress={stopRun} />
-      )}
-    </View>
-  );
+{
+  startDate: number;        // Unix timestamp in seconds
+  endDate: number;          // Unix timestamp in seconds
+  duration: number;         // Duration in seconds
+  distance: number;         // Distance in meters
+  calories: number;         // Calories in kilocalories
+  activityType?: ActivityType;
+  metadata?: Record<string, any>;
 }
 ```
 
-## Platform Support
+**ActivityType**: `'running' | 'walking' | 'cycling' | 'swimming' | 'hiking' | 'yoga' | 'functionalStrengthTraining' | 'traditionalStrengthTraining' | 'elliptical' | 'rowing' | 'other'`
 
-- ✅ iOS 13.0+
-- ❌ Android (HealthKit is iOS-only)
+### `queryWorkouts(options: QueryOptions): Promise<Workout[]>`
+
+Query workouts from HealthKit.
+
+**QueryOptions**:
+```typescript
+{
+  startDate?: Date | number;
+  endDate?: Date | number;
+  limit?: number;
+}
+```
+
+### `getTotalDistance(startDate: Date, endDate: Date): Promise<number>`
+
+Get total distance for a date range (in meters).
+
+### `getTotalCalories(startDate: Date, endDate: Date): Promise<number>`
+
+Get total calories for a date range (in kilocalories).
+
+### `deleteWorkout(workoutId: string): Promise<void>`
+
+Delete a workout from HealthKit.
+
+## Requirements
+
+- iOS 13.0+
+- Physical iOS device (HealthKit doesn't work on simulator)
+- HealthKit capability enabled in your Apple Developer account
+
+## Configuration
+
+The module automatically configures HealthKit permissions via the config plugin. You can customize the permission messages in your app.json:
+
+```json
+{
+  "plugins": [
+    [
+      "./modules/expo-healthkit/app.plugin.js",
+      {
+        "healthShareUsageDescription": "Custom read permission message",
+        "healthUpdateUsageDescription": "Custom write permission message"
+      }
+    ]
+  ]
+}
+```
 
 ## License
 
