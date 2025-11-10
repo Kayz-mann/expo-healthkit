@@ -22,7 +22,7 @@ class ExpoHealthKitManager {
     let writeDataTypes = Set(writeTypes.compactMap { parseDataType($0) })
 
     do {
-      try await healthStore.requestAuthorization(toShare: writeDataTypes, read: readDataTypes)
+      try await healthStore.requestAuthorization(toShare: writeDataTypes as! Set<HKSampleType>, read: readDataTypes)
     } catch {
       throw HealthKitError.authorizationFailed(error.localizedDescription)
     }
