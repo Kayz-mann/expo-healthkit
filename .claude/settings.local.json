@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(yarn ios:*)",
+      "Bash(export PATH=\"/opt/homebrew/bin:/usr/local/bin:/usr/bin:$PATH\")",
+      "Bash(pod install)",
+      "Bash(npx expo prebuild:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

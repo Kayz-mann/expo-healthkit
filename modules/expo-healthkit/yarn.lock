@@ -2,6 +2,21 @@
 # yarn lockfile v1
 
 
+"@kayzmann/expo-healthkit@1.0.3":
+  version "1.0.3"
+  resolved "https://registry.npmjs.org/@kayzmann/expo-healthkit/-/expo-healthkit-1.0.3.tgz#991696139d48504562f092c905f5384a52f47aee"
+  integrity sha512-LpOBsT0ei03z/aDZ0l5n+eMh9b9B2wk6YaorESd9T+gPafDrFuloze7QLgwdw1+GEhWc5lXFYiMc60LKflPtSg==
+  dependencies:
+    expo-modules-core "*"
+
+"@kayzmann/expo-healthkit@1.0.4":
+  version "1.0.4"
+  resolved "https://registry.npmjs.org/@kayzmann/expo-healthkit/-/expo-healthkit-1.0.4.tgz#06e50441d153f11510d677c0671b96451a76a64f"
+  integrity sha512-agRpW+LlF27Lpjg3BBJJH53YFXPFgLm2fj7/yAIvY+8bbJP+0fGGDgCSsRIps4XjgUUHtYBYjPMF4e6fTwHrLw==
+  dependencies:
+    "@kayzmann/expo-healthkit" "1.0.3"
+    expo-modules-core "*"
+
 expo-modules-core@*:
   version "3.0.25"
   resolved "https://registry.npmjs.org/expo-modules-core/-/expo-modules-core-3.0.25.tgz#5fc7c748fbba3d21b8b790144987074f89a2ee48"

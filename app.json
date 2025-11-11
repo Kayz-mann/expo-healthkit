@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "health-kit-rn",
-    "slug": "health-kit-rn",
+    "name": "expo-healthkit",
+    "slug": "expo-healthkit",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -20,7 +20,8 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.kayzmann.healthkitrn"
     },
     "web": {
       "output": "static",
@@ -41,7 +42,7 @@
         }
       ],
       [
-        "./modules/expo-healthkit/app.plugin.js",
+        "@kayzmann/expo-healthkit",
         {
           "healthShareUsageDescription": "This app needs access to read your health and workout data",
           "healthUpdateUsageDescription": "This app needs access to save your workout data to the Health app"

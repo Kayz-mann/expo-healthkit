@@ -1377,6 +1377,21 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
+"@kayzmann/expo-healthkit@1.0.3":
+  version "1.0.3"
+  resolved "https://registry.npmjs.org/@kayzmann/expo-healthkit/-/expo-healthkit-1.0.3.tgz#991696139d48504562f092c905f5384a52f47aee"
+  integrity sha512-LpOBsT0ei03z/aDZ0l5n+eMh9b9B2wk6YaorESd9T+gPafDrFuloze7QLgwdw1+GEhWc5lXFYiMc60LKflPtSg==
+  dependencies:
+    expo-modules-core "*"
+
+"@kayzmann/expo-healthkit@1.0.4":
+  version "1.0.4"
+  resolved "https://registry.npmjs.org/@kayzmann/expo-healthkit/-/expo-healthkit-1.0.4.tgz#06e50441d153f11510d677c0671b96451a76a64f"
+  integrity sha512-agRpW+LlF27Lpjg3BBJJH53YFXPFgLm2fj7/yAIvY+8bbJP+0fGGDgCSsRIps4XjgUUHtYBYjPMF4e6fTwHrLw==
+  dependencies:
+    "@kayzmann/expo-healthkit" "1.0.3"
+    expo-modules-core "*"
+
 "@napi-rs/wasm-runtime@^0.2.11":
   version "0.2.12"
   resolved "https://registry.npmjs.org/@napi-rs/wasm-runtime/-/wasm-runtime-0.2.12.tgz#3e78a8b96e6c33a6c517e1894efbd5385a7cb6f2"
@@ -3516,9 +3531,6 @@ expo-haptics@~15.0.7:
   resolved "https://registry.npmjs.org/expo-haptics/-/expo-haptics-15.0.7.tgz#384bb873d7eca7b141f85e4f300b75eab68ebfe9"
   integrity sha512-7flWsYPrwjJxZ8x82RiJtzsnk1Xp9ahnbd9PhCy3NnsemyMApoWIEUr4waPqFr80DtiLZfhD9VMLL1CKa8AImQ==
 
-"expo-healthkit@file:./modules/expo-healthkit":
-  version "1.0.0"
-
 expo-image@~3.0.10:
   version "3.0.10"
   resolved "https://registry.npmjs.org/expo-image/-/expo-image-3.0.10.tgz#a589098c3688d76c6e238ae90e1efc06ac4902b0"
@@ -3548,7 +3560,7 @@ expo-modules-autolinking@3.0.21:
     require-from-string "^2.0.2"
     resolve-from "^5.0.0"
 
-expo-modules-core@3.0.25:
+expo-modules-core@*, expo-modules-core@3.0.25:
   version "3.0.25"
   resolved "https://registry.npmjs.org/expo-modules-core/-/expo-modules-core-3.0.25.tgz#5fc7c748fbba3d21b8b790144987074f89a2ee48"
   integrity sha512-0P8PT8UV6c5/+p8zeVM/FXvBgn/ErtGcMaasqUgbzzBUg94ktbkIrij9t9reGCrir03BYt/Bcpv+EQtYC8JOug==

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Button, ScrollView, Alert } from 'react-native';
-import * as ExpoHealthKit from 'expo-healthkit';
-import type { Workout } from 'expo-healthkit';
+import * as ExpoHealthKit from '@kayzmann/expo-healthkit';
+import type { Workout } from '@kayzmann/expo-healthkit';
 
 export default function HealthKitDemo() {
   const [isAvailable, setIsAvailable] = useState(false);
@@ -13,11 +13,81 @@ export default function HealthKitDemo() {
     // Check if HealthKit is available
     const available = ExpoHealthKit.isAvailable();
     setIsAvailable(available);
+
+    // Automatically request HealthKit authorization on mount
+    if (available) {
+      requestHealthKitAccess();
+    }
   }, []);
+
+  const requestHealthKitAccess = async () => {
+    try {
+      await ExpoHealthKit.requestAuthorization(
+        [
+          'Workout',
+          'Steps',
+          'HeartRate',
+          'Sleep',
+          'DietaryWater',
+          'DietaryCaffeine',
+          'DietaryProtein',
+          'DietaryCarbohydrates',
+          'DietaryFat',
+          'Height',
+          'Weight',
+          'BodyFatPercentage',
+        ] as any, // Read permissions - using 'as any' for demo since local types may not match published package
+        [
+          'Workout',
+          'DietaryWater',
+          'DietaryCaffeine',
+          'DietaryProtein',
+          'DietaryCarbohydrates',
+          'DietaryFat',
+          'Height',
+          'Weight',
+          'BodyFatPercentage',
+        ] as any // Write permissions
+      );
+      setAuthorized(true);
+    } catch (error: any) {
+      console.error('HealthKit authorization error:', error);
+      // Authorization can fail if user denies, but we don't show an alert
+      // since this is automatic on mount. User can still manually request.
+      // Set authorized to false to show the manual request button
+      setAuthorized(false);
+    }
+  };
 
   const handleRequestAuth = async () => {
     try {
-      await ExpoHealthKit.requestAuthorization(['Workout'], ['Workout']);
+      await ExpoHealthKit.requestAuthorization(
+        [
+          'Workout',
+          'Steps',
+          'HeartRate',
+          'Sleep',
+          'DietaryWater',
+          'DietaryCaffeine',
+          'DietaryProtein',
+          'DietaryCarbohydrates',
+          'DietaryFat',
+          'Height',
+          'Weight',
+          'BodyFatPercentage',
+        ] as any, // Read permissions
+        [
+          'Workout',
+          'DietaryWater',
+          'DietaryCaffeine',
+          'DietaryProtein',
+          'DietaryCarbohydrates',
+          'DietaryFat',
+          'Height',
+          'Weight',
+          'BodyFatPercentage',
+        ] as any // Write permissions
+      );
       setAuthorized(true);
       Alert.alert('Success', 'HealthKit authorization granted');
     } catch (error) {

@@ -1,26 +1,47 @@
 {
-  "name": "expo-healthkit",
-  "version": "1.0.0",
-  "description": "Expo module for iOS HealthKit integration",
+  "name": "@kayzmann/expo-healthkit",
+  "version": "2.0.0",
+  "description": "Modern iOS HealthKit integration for Expo & React Native - Zero native config, 50+ health metrics, built with Swift & TypeScript",
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "scripts": {
     "test": "expo-module test"
   },
   "keywords": [
+    "healthkit",
+    "expo-healthkit",
+    "react-native-healthkit",
     "react-native",
     "expo",
     "expo-module",
-    "healthkit",
     "ios",
-    "health"
+    "health",
+    "health-app",
+    "health-data",
+    "apple-health",
+    "workout",
+    "fitness",
+    "fitness-tracking",
+    "activity-tracking",
+    "steps",
+    "heart-rate",
+    "sleep",
+    "sleep-tracking",
+    "nutrition",
+    "vitals",
+    "body-measurements",
+    "calories",
+    "swift",
+    "typescript",
+    "expo-modules-api",
+    "zero-config",
+    "config-plugin"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/health-kit-rn.git",
-    "directory": "modules/expo-healthkit"
+    "url": "https://github.com/Kayz-mann/health-kit-expo-modules.git"
   },
-  "author": "Your Name",
+  "author": "Kayz-mann",
   "license": "MIT",
   "dependencies": {
     "expo-modules-core": "*"
@@ -29,5 +50,12 @@
     "expo": "*",
     "react": "*",
     "react-native": "*"
-  }
+  },
+  "files": [
+    "src",
+    "ios",
+    "expo-module.config.json",
+    "app.plugin.js",
+    "README.md"
+  ]
 }

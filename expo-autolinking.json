@@ -1,0 +1,7 @@
+{
+  "modules": {
+    "expo-healthkit": {
+      "source": "./modules/expo-healthkit"
+    }
+  }
+}

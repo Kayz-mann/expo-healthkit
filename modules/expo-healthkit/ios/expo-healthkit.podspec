@@ -1,6 +1,6 @@
 require 'json'
 
-package = JSON.parse(File.read(File.join(__dir__, 'package.json')))
+package = JSON.parse(File.read(File.join(__dir__, '..', 'package.json')))
 
 Pod::Spec.new do |s|
   s.name           = 'expo-healthkit'
@@ -23,6 +23,8 @@ Pod::Spec.new do |s|
     'SWIFT_COMPILATION_MODE' => 'wholemodule'
   }
 
+  s.module_name = 'expo_healthkit'
+
   # Only include iOS Swift files, exclude node_modules and android
-  s.source_files = "ios/**/*.{h,m,mm,swift,hpp,cpp}"
+  s.source_files = "**/*.{h,m,mm,swift,hpp,cpp}"
 end

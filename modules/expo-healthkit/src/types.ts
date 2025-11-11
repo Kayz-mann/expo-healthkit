@@ -12,11 +12,49 @@ export type ActivityType =
   | 'other';
 
 export type DataType =
+  // Workouts
   | 'Workout'
-  | 'Distance'
-  | 'Calories'
-  | 'Steps'
-  | 'HeartRate';
+
+  // Activity & Fitness
+  | 'Steps' | 'StepCount'
+  | 'Distance' | 'DistanceWalkingRunning'
+  | 'DistanceCycling'
+  | 'DistanceSwimming'
+  | 'FlightsClimbed'
+  | 'ActiveEnergy' | 'Calories' | 'ActiveEnergyBurned'
+  | 'BasalEnergy' | 'BasalEnergyBurned'
+
+  // Body Measurements
+  | 'Height' | 'BodyHeight'
+  | 'Weight' | 'BodyMass' | 'BodyWeight'
+  | 'BodyMassIndex' | 'BMI'
+  | 'BodyFat' | 'BodyFatPercentage'
+  | 'LeanMass' | 'LeanBodyMass'
+
+  // Vitals
+  | 'HeartRate'
+  | 'RestingHeartRate'
+  | 'HeartRateVariability' | 'HRV'
+  | 'BloodPressureSystolic'
+  | 'BloodPressureDiastolic'
+  | 'RespiratoryRate'
+  | 'OxygenSat' | 'OxygenSaturation' | 'SpO2'
+  | 'BodyTemperature'
+
+  // Nutrition
+  | 'DietaryEnergy' | 'DietaryCalories'
+  | 'Protein' | 'DietaryProtein'
+  | 'Carbs' | 'Carbohydrates' | 'DietaryCarbohydrates'
+  | 'Fat' | 'DietaryFat' | 'DietaryFatTotal'
+  | 'Fiber' | 'DietaryFiber'
+  | 'Water' | 'DietaryWater'
+  | 'Caffeine' | 'DietaryCaffeine'
+
+  // Sleep
+  | 'Sleep' | 'SleepAnalysis'
+
+  // Mindfulness
+  | 'Mindfulness' | 'MindfulMinutes';
 
 export interface WorkoutData {
   startDate: number;
@@ -42,4 +80,25 @@ export interface QueryOptions {
   startDate?: Date | number;
   endDate?: Date | number;
   limit?: number;
+}
+
+export interface QuantitySample {
+  id: string;
+  value: number;
+  startDate: number;
+  endDate: number;
+}
+
+export interface SleepSample {
+  id: string;
+  value: 'asleep' | 'awake' | 'inBed' | 'core' | 'deep' | 'rem' | 'unknown';
+  startDate: number;
+  endDate: number;
+  duration: number;
+}
+
+export interface BloodPressure {
+  systolic: number;
+  diastolic: number;
+  timestamp?: number;
 }
