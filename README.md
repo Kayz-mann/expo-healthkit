@@ -1,4 +1,4 @@
-# Health Kit RN - HealthKit Integration with Expo
+# Expo HealthKit - HealthKit Integration with Expo
 
 A complete React Native + Expo application demonstrating iOS HealthKit integration through a custom native module.
 
