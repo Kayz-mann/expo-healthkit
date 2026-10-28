@@ -316,21 +316,189 @@ class ExpoHealthKitManager {
   }
 
   func saveBloodPressure(systolic: Double, diastolic: Double, date: Date) async throws {
-    // Save systolic
-    try await saveQuantitySample(
-      identifier: .bloodPressureSystolic,
-      value: systolic,
-      unit: .millimeterOfMercury(),
-      date: date
+    let systolicSample = HKQuantitySample(
+      type: HKQuantityType.quantityType(forIdentifier: .bloodPressureSystolic)!,
+      quantity: HKQuantity(unit: .millimeterOfMercury(), doubleValue: systolic),
+      start: date,
+      end: date
+    )
+    let diastolicSample = HKQuantitySample(
+      type: HKQuantityType.quantityType(forIdentifier: .bloodPressureDiastolic)!,
+      quantity: HKQuantity(unit: .millimeterOfMercury(), doubleValue: diastolic),
+      start: date,
+      end: date
+    )
+    let correlation = HKCorrelation(
+      type: HKCorrelationType.correlationType(forIdentifier: .bloodPressure)!,
+      start: date,
+      end: date,
+      objects: [systolicSample, diastolicSample]
     )
 
-    // Save diastolic
+    do {
+      try await healthStore.save(correlation)
+    } catch {
+      throw HealthKitError.saveFailed(error.localizedDescription)
+    }
+  }
+
+  func getBloodPressureSamples(startDate: Date, endDate: Date, limit: Int?) async throws -> [[String: Any]] {
+    let predicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate, options: .strictStartDate)
+    let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)
+
+    return try await withCheckedThrowingContinuation { continuation in
+      let query = HKSampleQuery(
+        sampleType: HKCorrelationType.correlationType(forIdentifier: .bloodPressure)!,
+        predicate: predicate,
+        limit: limit ?? HKObjectQueryNoLimit,
+        sortDescriptors: [sortDescriptor]
+      ) { _, samples, error in
+        if let error = error {
+          continuation.resume(throwing: HealthKitError.queryFailed(error.localizedDescription))
+          return
+        }
+
+        let correlations = samples as? [HKCorrelation] ?? []
+        let data = correlations.map { correlation -> [String: Any] in
+          var systolic = 0.0
+          var diastolic = 0.0
+          for object in correlation.objects {
+            guard let quantitySample = object as? HKQuantitySample else { continue }
+            switch quantitySample.quantityType.identifier {
+            case HKQuantityTypeIdentifier.bloodPressureSystolic.rawValue:
+              systolic = quantitySample.quantity.doubleValue(for: .millimeterOfMercury())
+            case HKQuantityTypeIdentifier.bloodPressureDiastolic.rawValue:
+              diastolic = quantitySample.quantity.doubleValue(for: .millimeterOfMercury())
+            default:
+              break
+            }
+          }
+          return [
+            "id": correlation.uuid.uuidString,
+            "systolic": systolic,
+            "diastolic": diastolic,
+            "startDate": correlation.startDate.timeIntervalSince1970,
+            "endDate": correlation.endDate.timeIntervalSince1970
+          ]
+        }
+
+        continuation.resume(returning: data)
+      }
+
+      healthStore.execute(query)
+    }
+  }
+
+  // MARK: - Extended Vitals
+
+  func getHeartRateVariabilitySamples(startDate: Date, endDate: Date, limit: Int?) async throws -> [[String: Any]] {
+    return try await getQuantitySamples(
+      identifier: .heartRateVariabilitySDNN,
+      startDate: startDate,
+      endDate: endDate,
+      unit: .secondUnit(with: .milli),
+      limit: limit
+    )
+  }
+
+  func getLatestHeartRateVariability() async throws -> Double? {
+    return try await getLatestQuantity(
+      identifier: .heartRateVariabilitySDNN,
+      unit: .secondUnit(with: .milli)
+    )
+  }
+
+  func getRespiratoryRateSamples(startDate: Date, endDate: Date, limit: Int?) async throws -> [[String: Any]] {
+    return try await getQuantitySamples(
+      identifier: .respiratoryRate,
+      startDate: startDate,
+      endDate: endDate,
+      unit: .count().unitDivided(by: .minute()),
+      limit: limit
+    )
+  }
+
+  func getLatestRespiratoryRate() async throws -> Double? {
+    return try await getLatestQuantity(
+      identifier: .respiratoryRate,
+      unit: .count().unitDivided(by: .minute())
+    )
+  }
+
+  func getBodyTemperatureSamples(startDate: Date, endDate: Date, limit: Int?) async throws -> [[String: Any]] {
+    return try await getQuantitySamples(
+      identifier: .bodyTemperature,
+      startDate: startDate,
+      endDate: endDate,
+      unit: .degreeCelsius(),
+      limit: limit
+    )
+  }
+
+  func getLatestBodyTemperature() async throws -> Double? {
+    return try await getLatestQuantity(
+      identifier: .bodyTemperature,
+      unit: .degreeCelsius()
+    )
+  }
+
+  func saveBodyTemperature(celsius: Double, date: Date) async throws {
     try await saveQuantitySample(
-      identifier: .bloodPressureDiastolic,
-      value: diastolic,
-      unit: .millimeterOfMercury(),
+      identifier: .bodyTemperature,
+      value: celsius,
+      unit: .degreeCelsius(),
       date: date
     )
+  }
+
+  // MARK: - Mindfulness
+
+  func saveMindfulSession(startDate: Date, endDate: Date) async throws {
+    let sample = HKCategorySample(
+      type: HKObjectType.categoryType(forIdentifier: .mindfulSession)!,
+      value: HKCategoryValue.notApplicable.rawValue,
+      start: startDate,
+      end: endDate
+    )
+
+    do {
+      try await healthStore.save(sample)
+    } catch {
+      throw HealthKitError.saveFailed(error.localizedDescription)
+    }
+  }
+
+  func getMindfulSessions(startDate: Date, endDate: Date, limit: Int?) async throws -> [[String: Any]] {
+    let predicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate, options: .strictStartDate)
+    let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)
+
+    return try await withCheckedThrowingContinuation { continuation in
+      let query = HKSampleQuery(
+        sampleType: HKObjectType.categoryType(forIdentifier: .mindfulSession)!,
+        predicate: predicate,
+        limit: limit ?? HKObjectQueryNoLimit,
+        sortDescriptors: [sortDescriptor]
+      ) { _, samples, error in
+        if let error = error {
+          continuation.resume(throwing: HealthKitError.queryFailed(error.localizedDescription))
+          return
+        }
+
+        let sessions = samples as? [HKCategorySample] ?? []
+        let data = sessions.map { sample -> [String: Any] in
+          return [
+            "id": sample.uuid.uuidString,
+            "startDate": sample.startDate.timeIntervalSince1970,
+            "endDate": sample.endDate.timeIntervalSince1970,
+            "duration": sample.endDate.timeIntervalSince(sample.startDate)
+          ]
+        }
+
+        continuation.resume(returning: data)
+      }
+
+      healthStore.execute(query)
+    }
   }
 
   // MARK: - Sleep

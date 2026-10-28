@@ -129,6 +129,72 @@ public class ExpoHealthKitModule: Module {
       try await healthManager.saveBloodPressure(systolic: systolic, diastolic: diastolic, date: date)
     }
 
+    AsyncFunction("getBloodPressureSamples") { (startDate: Double, endDate: Double, limit: Int?) async throws -> [[String: Any]] in
+      return try await healthManager.getBloodPressureSamples(
+        startDate: Date(timeIntervalSince1970: startDate),
+        endDate: Date(timeIntervalSince1970: endDate),
+        limit: limit
+      )
+    }
+
+    // Extended Vitals
+    AsyncFunction("getHeartRateVariabilitySamples") { (startDate: Double, endDate: Double, limit: Int?) async throws -> [[String: Any]] in
+      return try await healthManager.getHeartRateVariabilitySamples(
+        startDate: Date(timeIntervalSince1970: startDate),
+        endDate: Date(timeIntervalSince1970: endDate),
+        limit: limit
+      )
+    }
+
+    AsyncFunction("getLatestHeartRateVariability") { () async throws -> Double? in
+      return try await healthManager.getLatestHeartRateVariability()
+    }
+
+    AsyncFunction("getRespiratoryRateSamples") { (startDate: Double, endDate: Double, limit: Int?) async throws -> [[String: Any]] in
+      return try await healthManager.getRespiratoryRateSamples(
+        startDate: Date(timeIntervalSince1970: startDate),
+        endDate: Date(timeIntervalSince1970: endDate),
+        limit: limit
+      )
+    }
+
+    AsyncFunction("getLatestRespiratoryRate") { () async throws -> Double? in
+      return try await healthManager.getLatestRespiratoryRate()
+    }
+
+    AsyncFunction("getBodyTemperatureSamples") { (startDate: Double, endDate: Double, limit: Int?) async throws -> [[String: Any]] in
+      return try await healthManager.getBodyTemperatureSamples(
+        startDate: Date(timeIntervalSince1970: startDate),
+        endDate: Date(timeIntervalSince1970: endDate),
+        limit: limit
+      )
+    }
+
+    AsyncFunction("getLatestBodyTemperature") { () async throws -> Double? in
+      return try await healthManager.getLatestBodyTemperature()
+    }
+
+    AsyncFunction("saveBodyTemperature") { (celsius: Double, timestamp: Double?) async throws in
+      let date = timestamp != nil ? Date(timeIntervalSince1970: timestamp!) : Date()
+      try await healthManager.saveBodyTemperature(celsius: celsius, date: date)
+    }
+
+    // Mindfulness
+    AsyncFunction("saveMindfulSession") { (startTimestamp: Double, endTimestamp: Double) async throws in
+      try await healthManager.saveMindfulSession(
+        startDate: Date(timeIntervalSince1970: startTimestamp),
+        endDate: Date(timeIntervalSince1970: endTimestamp)
+      )
+    }
+
+    AsyncFunction("getMindfulSessions") { (startDate: Double, endDate: Double, limit: Int?) async throws -> [[String: Any]] in
+      return try await healthManager.getMindfulSessions(
+        startDate: Date(timeIntervalSince1970: startDate),
+        endDate: Date(timeIntervalSince1970: endDate),
+        limit: limit
+      )
+    }
+
     // Sleep
     AsyncFunction("getSleepSamples") { (startDate: Double, endDate: Double) async throws -> [[String: Any]] in
       return try await healthManager.getSleepSamples(

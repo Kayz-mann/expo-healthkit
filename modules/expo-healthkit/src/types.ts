@@ -102,3 +102,18 @@ export interface BloodPressure {
   diastolic: number;
   timestamp?: number;
 }
+
+export interface BloodPressureReading {
+  id: string;
+  systolic: number;
+  diastolic: number;
+  startDate: number;
+  endDate: number;
+}
+
+export interface MindfulnessSession {
+  id: string;
+  startDate: number;
+  endDate: number;
+  duration: number;
+}

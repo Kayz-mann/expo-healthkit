@@ -7,6 +7,8 @@ import type {
   QuantitySample,
   SleepSample,
   BloodPressure,
+  BloodPressureReading,
+  MindfulnessSession,
 } from './types';
 
 const ExpoHealthKitModule = requireNativeModule('ExpoHealthKit');
@@ -263,7 +265,8 @@ export async function getOxygenSaturation(
 }
 
 /**
- * Save blood pressure measurement to HealthKit
+ * Save blood pressure measurement to HealthKit as a correlated sample
+ * (systolic and diastolic tied together, matching how the Health app stores it)
  * @param systolic - Systolic pressure in mmHg
  * @param diastolic - Diastolic pressure in mmHg
  * @param date - Optional date (defaults to now)
@@ -275,6 +278,147 @@ export async function saveBloodPressure(
 ): Promise<void> {
   const timestamp = date ? date.getTime() / 1000 : undefined;
   return await ExpoHealthKitModule.saveBloodPressure(systolic, diastolic, timestamp);
+}
+
+/**
+ * Get blood pressure readings for a date range
+ * @param startDate - Start date
+ * @param endDate - End date
+ * @param limit - Optional limit on number of readings
+ * @returns Array of readings with systolic/diastolic in mmHg
+ */
+export async function getBloodPressureSamples(
+  startDate: Date,
+  endDate: Date,
+  limit?: number
+): Promise<BloodPressureReading[]> {
+  const start = startDate.getTime() / 1000;
+  const end = endDate.getTime() / 1000;
+  return await ExpoHealthKitModule.getBloodPressureSamples(start, end, limit);
+}
+
+/**
+ * Get heart rate variability (SDNN) samples for a date range
+ * @param startDate - Start date
+ * @param endDate - End date
+ * @param limit - Optional limit on number of samples
+ * @returns Array of HRV samples in milliseconds
+ */
+export async function getHeartRateVariabilitySamples(
+  startDate: Date,
+  endDate: Date,
+  limit?: number
+): Promise<QuantitySample[]> {
+  const start = startDate.getTime() / 1000;
+  const end = endDate.getTime() / 1000;
+  return await ExpoHealthKitModule.getHeartRateVariabilitySamples(start, end, limit);
+}
+
+/**
+ * Get the most recent heart rate variability (SDNN) measurement
+ * @returns HRV in milliseconds, or null if not available
+ */
+export async function getLatestHeartRateVariability(): Promise<number | null> {
+  return await ExpoHealthKitModule.getLatestHeartRateVariability();
+}
+
+/**
+ * Get respiratory rate samples for a date range
+ * @param startDate - Start date
+ * @param endDate - End date
+ * @param limit - Optional limit on number of samples
+ * @returns Array of respiratory rate samples (breaths per minute)
+ */
+export async function getRespiratoryRateSamples(
+  startDate: Date,
+  endDate: Date,
+  limit?: number
+): Promise<QuantitySample[]> {
+  const start = startDate.getTime() / 1000;
+  const end = endDate.getTime() / 1000;
+  return await ExpoHealthKitModule.getRespiratoryRateSamples(start, end, limit);
+}
+
+/**
+ * Get the most recent respiratory rate measurement
+ * @returns Breaths per minute, or null if not available
+ */
+export async function getLatestRespiratoryRate(): Promise<number | null> {
+  return await ExpoHealthKitModule.getLatestRespiratoryRate();
+}
+
+/**
+ * Get body temperature samples for a date range
+ * @param startDate - Start date
+ * @param endDate - End date
+ * @param limit - Optional limit on number of samples
+ * @returns Array of temperature samples in degrees Celsius
+ */
+export async function getBodyTemperatureSamples(
+  startDate: Date,
+  endDate: Date,
+  limit?: number
+): Promise<QuantitySample[]> {
+  const start = startDate.getTime() / 1000;
+  const end = endDate.getTime() / 1000;
+  return await ExpoHealthKitModule.getBodyTemperatureSamples(start, end, limit);
+}
+
+/**
+ * Get the most recent body temperature measurement
+ * @returns Temperature in degrees Celsius, or null if not available
+ */
+export async function getLatestBodyTemperature(): Promise<number | null> {
+  return await ExpoHealthKitModule.getLatestBodyTemperature();
+}
+
+/**
+ * Save a body temperature measurement to HealthKit
+ * @param celsius - Temperature in degrees Celsius
+ * @param date - Optional date (defaults to now)
+ */
+export async function saveBodyTemperature(
+  celsius: number,
+  date?: Date
+): Promise<void> {
+  const timestamp = date ? date.getTime() / 1000 : undefined;
+  return await ExpoHealthKitModule.saveBodyTemperature(celsius, timestamp);
+}
+
+// ======================
+// Mindfulness
+// ======================
+
+/**
+ * Save a mindful session to HealthKit
+ * @param startDate - Session start
+ * @param endDate - Session end
+ */
+export async function saveMindfulSession(
+  startDate: Date,
+  endDate: Date
+): Promise<void> {
+  return await ExpoHealthKitModule.saveMindfulSession(
+    startDate.getTime() / 1000,
+    endDate.getTime() / 1000
+  );
+}
+
+/**
+ * Get mindful sessions for a date range
+ * @param startDate - Start date
+ * @param endDate - End date
+ * @param limit - Optional limit on number of sessions
+ * @returns Array of mindful sessions with duration
+ */
+export async function getMindfulSessions(
+  startDate: Date,
+  endDate: Date,
+  limit?: number
+): Promise<MindfulnessSession[]> {
+  const start = startDate.getTime() / 1000;
+  const end = endDate.getTime() / 1000;
+  return await ExpoHealthKitModule.getMindfulSessions(start, end, limit);
 }
 
 // ======================
