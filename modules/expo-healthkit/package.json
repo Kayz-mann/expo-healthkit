@@ -39,7 +39,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/Kayz-mann/health-kit-expo-modules.git"
+    "url": "git+https://github.com/Kayz-mann/health-kit-expo-modules.git"
   },
   "author": "Kayz-mann",
   "license": "MIT",
