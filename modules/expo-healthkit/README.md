@@ -90,16 +90,20 @@ npx expo run:ios
 ### ❤️ Heart & Vitals
 - Heart rate samples with time-series data
 - Resting heart rate
-- Heart rate variability (HRV)
-- Blood pressure (systolic/diastolic)
+- Heart rate variability (HRV) samples & latest
+- Blood pressure saved as a correlated sample (systolic/diastolic tied together) + readings query
 - Oxygen saturation (SpO2)
-- Respiratory rate
-- Body temperature
+- Respiratory rate samples & latest
+- Body temperature read & write
 
 ### 😴 Sleep Analysis
 - Sleep samples with stages
 - iOS 16+ sleep stages support (Core, Deep, REM)
 - Time in bed vs actual sleep time
+
+### 🧘 Mindfulness
+- Save mindful sessions with start/end
+- Query past sessions with durations
 
 ### 🍎 Nutrition & Hydration
 - Water intake tracking
@@ -221,8 +225,35 @@ const heartRates = await ExpoHealthKit.getHeartRateSamples(
 const currentHR = await ExpoHealthKit.getLatestHeartRate();
 console.log(`Current HR: ${currentHR} bpm`);
 
-// Save blood pressure
+// Save blood pressure (stored as a correlated sample, like the Health app)
 await ExpoHealthKit.saveBloodPressure(120, 80);
+
+// Read blood pressure history
+const readings = await ExpoHealthKit.getBloodPressureSamples(
+  new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+  new Date(),
+  30
+);
+
+// Heart rate variability (SDNN, milliseconds) and respiratory rate
+const hrv = await ExpoHealthKit.getLatestHeartRateVariability();
+const respRate = await ExpoHealthKit.getLatestRespiratoryRate();
+
+// Body temperature (Celsius)
+await ExpoHealthKit.saveBodyTemperature(36.8);
+const temp = await ExpoHealthKit.getLatestBodyTemperature();
+```
+
+### Log Mindful Sessions
+
+```typescript
+const start = new Date();
+const end = new Date(start.getTime() + 10 * 60 * 1000);
+
+await ExpoHealthKit.saveMindfulSession(start, end);
+
+const sessions = await ExpoHealthKit.getMindfulSessions(start, new Date());
+console.log(`Logged ${sessions.length} sessions`);
 ```
 
 ### Analyze Sleep
