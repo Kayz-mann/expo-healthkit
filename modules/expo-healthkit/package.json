@@ -1,6 +1,6 @@
 {
   "name": "@kayzmann/expo-healthkit",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Modern iOS HealthKit integration for Expo & React Native - Zero native config, 50+ health metrics, built with Swift & TypeScript",
   "main": "./src/index.ts",
   "types": "./src/index.ts",

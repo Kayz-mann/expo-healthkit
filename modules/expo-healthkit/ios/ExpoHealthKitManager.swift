@@ -19,10 +19,10 @@ class ExpoHealthKitManager {
     }
 
     let readDataTypes = Set(readTypes.compactMap { parseDataType($0) })
-    let writeDataTypes = Set(writeTypes.compactMap { parseDataType($0) })
+    let writeDataTypes = Set(writeTypes.compactMap { parseDataType($0) as? HKSampleType })
 
     do {
-      try await healthStore.requestAuthorization(toShare: writeDataTypes as! Set<HKSampleType>, read: readDataTypes)
+      try await healthStore.requestAuthorization(toShare: writeDataTypes, read: readDataTypes)
     } catch {
       throw HealthKitError.authorizationFailed(error.localizedDescription)
     }
@@ -31,28 +31,57 @@ class ExpoHealthKitManager {
   func saveWorkout(data: [String: Any]) async throws -> String {
     guard let startDate = data["startDate"] as? Double,
           let endDate = data["endDate"] as? Double,
-          let duration = data["duration"] as? Double,
           let distance = data["distance"] as? Double,
           let calories = data["calories"] as? Double else {
       throw HealthKitError.missingRequiredData("Missing required workout data")
     }
 
     let activityType = parseActivityType(data["activityType"] as? String ?? "running")
+    let start = Date(timeIntervalSince1970: startDate)
+    let end = Date(timeIntervalSince1970: endDate)
 
-    let workout = HKWorkout(
-      activityType: activityType,
-      start: Date(timeIntervalSince1970: startDate),
-      end: Date(timeIntervalSince1970: endDate),
-      duration: duration,
-      totalEnergyBurned: HKQuantity(unit: .kilocalorie(), doubleValue: calories),
-      totalDistance: HKQuantity(unit: .meter(), doubleValue: distance),
-      device: .local(),
-      metadata: data["metadata"] as? [String: Any]
-    )
+    let distanceType: HKQuantityTypeIdentifier
+    switch activityType {
+    case .cycling:
+      distanceType = .distanceCycling
+    case .swimming:
+      distanceType = .distanceSwimming
+    default:
+      distanceType = .distanceWalkingRunning
+    }
+
+    let configuration = HKWorkoutConfiguration()
+    configuration.activityType = activityType
+    let builder = HKWorkoutBuilder(healthStore: healthStore, configuration: configuration, device: .local())
+
+    let samples: [HKSample] = [
+      HKQuantitySample(
+        type: HKQuantityType.quantityType(forIdentifier: distanceType)!,
+        quantity: HKQuantity(unit: .meter(), doubleValue: distance),
+        start: start,
+        end: end
+      ),
+      HKQuantitySample(
+        type: HKQuantityType.quantityType(forIdentifier: .activeEnergyBurned)!,
+        quantity: HKQuantity(unit: .kilocalorie(), doubleValue: calories),
+        start: start,
+        end: end
+      )
+    ]
 
     do {
-      try await healthStore.save(workout)
+      try await builder.beginCollection(at: start)
+      try await builder.addSamples(samples)
+      if let metadata = data["metadata"] as? [String: Any], !metadata.isEmpty {
+        try await builder.addMetadata(metadata)
+      }
+      try await builder.endCollection(at: end)
+      guard let workout = try await builder.finishWorkout() else {
+        throw HealthKitError.saveFailed("Workout builder returned no workout")
+      }
       return workout.uuid.uuidString
+    } catch let error as HealthKitError {
+      throw error
     } catch {
       throw HealthKitError.saveFailed(error.localizedDescription)
     }
@@ -271,7 +300,8 @@ class ExpoHealthKitManager {
   func getRestingHeartRate(startDate: Date, endDate: Date) async throws -> Double? {
     return try await getLatestQuantity(
       identifier: .restingHeartRate,
-      unit: .count().unitDivided(by: .minute())
+      unit: .count().unitDivided(by: .minute()),
+      predicate: HKQuery.predicateForSamples(withStart: startDate, end: endDate, options: .strictStartDate)
     )
   }
 
@@ -453,13 +483,13 @@ class ExpoHealthKitManager {
     }
   }
 
-  private func getLatestQuantity(identifier: HKQuantityTypeIdentifier, unit: HKUnit) async throws -> Double? {
+  private func getLatestQuantity(identifier: HKQuantityTypeIdentifier, unit: HKUnit, predicate: NSPredicate? = nil) async throws -> Double? {
     let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)
 
     return try await withCheckedThrowingContinuation { continuation in
       let query = HKSampleQuery(
         sampleType: HKQuantityType.quantityType(forIdentifier: identifier)!,
-        predicate: nil,
+        predicate: predicate,
         limit: 1,
         sortDescriptors: [sortDescriptor]
       ) { _, samples, error in
