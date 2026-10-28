@@ -7,7 +7,6 @@
     "icon": "./assets/images/icon.png",
     "scheme": "healthkitrn",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.kayzmann.healthkitrn"
@@ -19,7 +18,6 @@
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
-      "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "package": "com.kayzmann.healthkitrn"
     },
@@ -47,7 +45,11 @@
           "healthShareUsageDescription": "This app needs access to read your health and workout data",
           "healthUpdateUsageDescription": "This app needs access to save your workout data to the Health app"
         }
-      ]
+      ],
+      "expo-font",
+      "expo-image",
+      "expo-status-bar",
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true,
