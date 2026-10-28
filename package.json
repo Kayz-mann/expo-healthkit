@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
-    "@kayzmann/expo-healthkit": "1.0.4",
+    "@kayzmann/expo-healthkit": "file:./modules/expo-healthkit",
     "@react-navigation/bottom-tabs": "^7.4.0",
     "@react-navigation/elements": "^2.6.3",
     "@react-navigation/native": "^7.1.8",
